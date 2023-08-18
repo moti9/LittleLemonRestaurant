@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="about-section mt-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-7">
+        <h1 class="mb-4">About Us</h1>
+        <p>
+          Based in Chicago, Illinois, Little Lemon is a family-owned Mediterranean restaurant, focused on traditional
+          recipes served with a modern twist.
+        </p>
+        <p>
+          The chefs draw inspiration from Italian, Greek, and Turkish culture and have a menu of 12-15 items that they
+          rotate seasonally.
+        </p>
+        <p>
+          The restaurant has a rustic and relaxed atmosphere with moderate prices, making it a popular place for a meal
+          any time of the day.
+        </p>
+        <p>
+          Little Lemon is owned by two Italian brothers, Mario and Adrian, who moved to the United States to pursue
+          their shared dream of owning a restaurant.
+        </p>
+        <p>
+          To craft the menu, Mario relies on family recipes and his experience as a chef in Italy.
+        </p>
+        <p>
+          Adrian does all the marketing for the restaurant and led the effort to expand the menu beyond classic Italian
+          to incorporate additional cuisines from the Mediterranean region.
+        </p>
+        <span class="d-flex p-4">
+          <h3>Current Rating : </h3>
+          <p class="average_rating">{{ average_rating|floatformat:1 }} &#9733;</p>
+        </span>
+      </div>
+      <div class="col-md-5">
+        <figure class="figure">
+          <img src="{% static 'img/mario-and-adrian.jpg' %}" alt="Mario and Adrian" class="img-fluid rounded shadow">
+          <figcaption class="figure-caption mt-2">
+            Little Lemon owners Mario and Adrian.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+  </div>
+</section>
+<div class="container mb-5">
+  <h1 class="text-center mb-5">Feedbacks</h1>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for feedback in feedbacks %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ feedback.user.username }}</h5>
+          <p class="card-text">Date: {{ feedback.feed_date }}</p>
+          <div class="d-flex align-items-center mb-3">
+            <p class="mb-0 me-2">Rating:</p>
+            <div class="rating">
+              {{feedback.rating}}
+              &#9733;
+            </div>
+          </div>
+          <p class="card-text">{{ feedback.message }}</p>
+        </div>
+        <div class="carousel slide" data-bs-ride="carousel" id="carousel-{{ feedback.id }}">
+          <div class="carousel-indicators">
+            {% for image in feedback.feedimage_set.all %}
+            <button type="button" data-bs-target="#carousel-{{ feedback.id }}" data-bs-slide-to="{{ forloop.counter0 }}"
+              {% if forloop.first %}class="active" {% endif %}></button>
+            {% endfor %}
+          </div>
+          <div class="carousel-inner">
+            {% for image in feedback.feedimage_set.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ image.images.url }}" class="d-block w-100 img-carousel" alt="Feedback Image">
+            </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ feedback.id }}"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ feedback.id }}"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="d-flex justify-content-center mt-4">
+    <div class="pagination">
+      <span class="step-links">
+        {% if feedbacks.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ feedbacks.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current-page">
+          Page {{ feedbacks.number }} of {{ feedbacks.paginator.num_pages }}.
+        </span>
+
+        {% if feedbacks.has_next %}
+        <a href="?page={{ feedbacks.next_page_number }}">next</a>
+        <a href="?page={{ feedbacks.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+<div class="column">
+  <div class="videowrap">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11898.289517452584!2d-87.60853049433447!3d41.79442860243028!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880e2912ce6f7027%3A0xc0cfb5545d4a37b2!2sHyde%20Park%2C%20Chicago%2C%20IL%2C%20USA!5e0!3m2!1sen!2spt!4v1662384760663!5m2!1sen!2spt"
+      width="600" height="450" style="border: 0" allowfullscreen="" loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</div>
+<style>
+  .rating {
+    color: #259c07;
+    font-size: 1.2rem;
+    font-weight: bolder
+  }
+
+  .carousel {
+    margin-top: 15px;
+  }
+
+  .carousel-inner {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .carousel-item img {
+    object-fit: cover;
+    height: 300px;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .step-links {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+
+  .step-links a {
+    padding: 5px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 5px;
+  }
+
+  .current-page {
+    font-weight: bold;
+    margin: 0 10px;
+  }
+
+  .average_rating {
+    background-color: #259c07;
+    border-radius: 100px;
+    padding: 2px;
+    color: blanchedalmond;
+    font-weight: bolder;
+    font-size: 1.5rem;
+  }
+</style>
+{% endblock %}
